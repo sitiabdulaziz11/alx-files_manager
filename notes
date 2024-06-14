@@ -1,0 +1,8 @@
+to start and verify redis server is running
+redis-server
+redis-cli ping
+If the server is running, you should receive a response PONG.
+
+
+to see error
+/var/log/redis/redis-server.log
