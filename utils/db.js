@@ -7,7 +7,7 @@ const DB_DATABASE = process.env.DB_DATABASE || 'files_manager';
 // MongoDB Client Class
 class DBClient {
     constructor() {
-        this.client = new MongoClient(`mongodb://${DB_HOST}:${DB_PORT}/${DB_DATABASE}`,);
+        this.client = new MongoClient(`mongodb://${DB_HOST}:${DB_PORT}/${DB_DATABASE}`);
         this.isConnected = false;
         this.db = null;
         this.client.connect((err) => {
@@ -25,6 +25,12 @@ class DBClient {
     }
     async nbFiles() {
         return this.db.collection('files').countDocuments();
+    }
+    filesCollection() {
+        return this.db.collection('files');
+    }
+    findUserByEmail(email) {
+        return this.db.collection('users').findOne({ email });
     }
 }
 const dbClient = new DBClient();
