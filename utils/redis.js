@@ -5,11 +5,13 @@ class RedisClient {
     this.client = redis.createClient();
     this.client.on('error', (err) => {
       console.log('Redis Client Error', err);
-    })
+    });
   }
+
   isAlive() {
     return this.client.connected;
   }
+
   async get(key) {
     return new Promise((resolve, reject) => {
       this.client.get(key, (err, value) => {
@@ -20,9 +22,10 @@ class RedisClient {
       });
     });
   }
+
   async set(key, value, duration) {
     return new Promise((resolve, reject) => {
-      this.client.set(key, value, 'EX', duration,(err) => {
+      this.client.set(key, value, 'EX', duration, (err) => {
         if (err) {
           return reject(err);
         }
@@ -30,6 +33,7 @@ class RedisClient {
       });
     });
   }
+
   async del(key) {
     return new Promise((resolve, reject) => {
       this.client.del(key, (err) => {
@@ -41,5 +45,6 @@ class RedisClient {
     });
   }
 }
+
 const redisClient = new RedisClient();
 module.exports = redisClient;

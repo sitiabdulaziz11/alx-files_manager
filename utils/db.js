@@ -1,37 +1,36 @@
-import { MongoClient } from 'mongodb';
+const { MongoClient } = require('mongodb');
+const uri = 'mongodb://localhost:27017';
+let client = new MongoClient(uri, { useUnifiedTopology: true });
 
-const DB_HOST = process.env.DB_HOST || 'localhost';
-const DB_PORT = process.env.DB_PORT || 27017;
-const DB_DATABASE = process.env.DB_DATABASE || 'files_manager';
-
-// MongoDB Client Class
 class DBClient {
-    constructor() {
-        this.client = new MongoClient(`mongodb://${DB_HOST}:${DB_PORT}/${DB_DATABASE}`);
-        this.isConnected = false;
-        this.db = null;
-        this.client.connect((err) => {
-            if (err) {
-                this.isConnected = true;
-                this.db = this.client.db(DB_DATABASE);
-            }
-        });
+  constructor() {
+    this.db = null;
+    this.connected = false;
+    this.connect();
+  }
+
+  async connect() {
+    try {
+      await client.connect();
+      this.db = client.db('mydatabase');
+      this.connected = true;
+      console.log('Connected successfully to MongoDB');
+    } catch (e) {
+      console.error('Error connecting to MongoDB', e);
     }
-    isAlive() {
-        return this.isConnected;
-    }
-    async nbUsers() {
-        return this.db.collection('users').countDocuments();
-    }
-    async nbFiles() {
-        return this.db.collection('files').countDocuments();
-    }
-    filesCollection() {
-        return this.db.collection('files');
-    }
-    findUserByEmail(email) {
-        return this.db.collection('users').findOne({ email });
-    }
+  }
+
+  isAlive() {
+    return this.connected;
+  }
+
+  async nbUsers() {
+    return this.db.collection('users').countDocuments();
+  }
+
+  async nbFiles() {
+    return this.db.collection('files').countDocuments();
+  }
 }
-const dbClient = new DBClient();
-module.exports = dbClient;
+
+module.exports = new DBClient();
